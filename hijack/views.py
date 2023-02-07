@@ -23,6 +23,8 @@ from hijack.conf import settings
 
 def get_used_backend(request):
     backend_str = request.session[BACKEND_SESSION_KEY]
+    if settings.HIJACK_CUSTOM_AUTHENTICATION_BACKEND:
+        backend_str = settings.HIJACK_CUSTOM_AUTHENTICATION_BACKEND
     backend = load_backend(backend_str)
     return backend
 
