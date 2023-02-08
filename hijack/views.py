@@ -26,9 +26,14 @@ def get_used_backend(request):
     backend_str = request.session[BACKEND_SESSION_KEY]
     if settings.HIJACKED_AUTHENTICATION_BACKEND and settings.HIJACKER_AUTHENTICATION_BACKEND:
         if reverse("hijack:acquire") == request.path:
+            request.session["hijacker_used_custom_backend"] = False
+            if backend_str == settings.HIJACKER_AUTHENTICATION_BACKEND:
+                request.session["hijacker_used_custom_backend"] = True
             backend_str = settings.HIJACKED_AUTHENTICATION_BACKEND
         elif reverse("hijack:release") == request.path:
-            backend_str = settings.HIJACKER_AUTHENTICATION_BACKEND
+            if request.session["hijacker_used_custom_backend"] == True:
+                backend_str = settings.HIJACKER_AUTHENTICATION_BACKEND
+            del request.session["hijacker_used_custom_backend"]
     backend = load_backend(backend_str)
     return backend
 
