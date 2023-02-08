@@ -27,7 +27,7 @@ def get_used_backend(request):
     if settings.HIJACKED_AUTHENTICATION_BACKEND and settings.HIJACKER_AUTHENTIACTION_BACKEND:
         if reverse("hijack:acquire") == request.path:
             backend_str = settings.HIJACKED_AUTHENTICATION_BACKEND
-        else:
+        elif reverse("hijack:release") == request.path:
             backend_str = settings.HIJACKER_AUTHENTIACTION_BACKEND
     backend = load_backend(backend_str)
     return backend
