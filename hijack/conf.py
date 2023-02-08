@@ -6,7 +6,8 @@ __all__ = ["settings"]
 class LazySettings:
     HIJACK_PERMISSION_CHECK = "hijack.permissions.superusers_only"
     HIJACK_INSERT_BEFORE = "</body>"
-    HIJACK_CUSTOM_AUTHENTICATION_BACKEND = ""
+    HIJACKED_AUTHENTICATION_BACKEND = ""
+    HIJACKER_AUTHENTIACTION_BACKEND = ""
 
     def __getattribute__(self, name):
         try:
