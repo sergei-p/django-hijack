@@ -24,7 +24,7 @@ from hijack.conf import settings
 
 def get_used_backend(request):
     backend_str = request.session[BACKEND_SESSION_KEY]
-    if settings.HIJACKED_AUTHENTICATION_BACKEND and settings.HIJACKER_AUTHENTIACTION_BACKEND:
+    if settings.HIJACKED_AUTHENTICATION_BACKEND and settings.HIJACKER_AUTHENTICATION_BACKEND:
         if reverse("hijack:acquire") == request.path:
             backend_str = settings.HIJACKED_AUTHENTICATION_BACKEND
         elif reverse("hijack:release") == request.path:
