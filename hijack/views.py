@@ -109,13 +109,13 @@ class AcquireUserView(
         backend = get_used_backend(request)
         backend = f"{backend.__module__}.{backend.__class__.__name__}"
 
-        admin_backend = request.session.get("hijacker_backend", "")
+        hijacker_backend = request.session.get("hijacker_backend", "")
 
         with signals.no_update_last_login(), keep_session_age(request.session):
             login(request, hijacked, backend=backend)
 
         request.session["hijack_history"] = hijack_history
-        request.session["hijacker_backend"] = admin_backend
+        request.session["hijacker_backend"] = hijacker_backend
 
         signals.hijack_started.send(
             sender=None,
