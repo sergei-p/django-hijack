@@ -24,15 +24,12 @@ from hijack.conf import settings
 
 def get_used_backend(request):
     backend_str = request.session[BACKEND_SESSION_KEY]
-    if settings.HIJACKED_AUTHENTICATION_BACKEND and settings.HIJACKER_AUTHENTICATION_BACKEND:
+    if settings.HIJACKED_CUSTOM_AUTHENTICATION_BACKEND:
         if reverse("hijack:acquire") == request.path:
-            request.session["hijacker_used_custom_backend"] = False
-            if backend_str == settings.HIJACKER_AUTHENTICATION_BACKEND:
-                request.session["hijacker_used_custom_backend"] = True
-            backend_str = settings.HIJACKED_AUTHENTICATION_BACKEND
+            request.session["hijacker_backend"] = backend_str
+            backend_str = settings.HIJACKED_CUSTOM_AUTHENTICATION_BACKEND            
         elif reverse("hijack:release") == request.path:
-            if request.session["hijacker_used_custom_backend"] == True:
-                backend_str = settings.HIJACKER_AUTHENTICATION_BACKEND
+            backend_str = request.session["hijacker_backend"]
     backend = load_backend(backend_str)
     return backend
 
@@ -112,13 +109,13 @@ class AcquireUserView(
         backend = get_used_backend(request)
         backend = f"{backend.__module__}.{backend.__class__.__name__}"
 
-        hijacker_used_custom_backend = request.session.get("hijacker_used_custom_backend", False)
+        admin_backend = request.session.get("hijacker_backend", "")
 
         with signals.no_update_last_login(), keep_session_age(request.session):
             login(request, hijacked, backend=backend)
 
         request.session["hijack_history"] = hijack_history
-        request.session["hijacker_used_custom_backend"] = hijacker_used_custom_backend
+        request.session["hijacker_backend"] = admin_backend
 
         signals.hijack_started.send(
             sender=None,
